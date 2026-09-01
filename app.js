@@ -1,11 +1,15 @@
 const root=document;document.getElementById("today").textContent=new Intl.DateTimeFormat("pt-BR",{dateStyle:"long"}).format(new Date()).toUpperCase();
 const el=(tag,text,className)=>{const node=document.createElement(tag);if(className)node.className=className;node.textContent=text||"";return node};
 const safeUrl=value=>{try{const u=new URL(value,location.origin);return ["http:","https:"].includes(u.protocol)?u.href:""}catch{return""}};
+const slotOf=item=>item.slot_key||item.slot||"";
 function link(article,className,titleTag="h3"){const a=el("a","",className);a.href=`materia.html?id=${Number(article.id)}`;if(article.image_url){const img=document.createElement("img");img.src=safeUrl(article.image_url);img.alt="";img.loading="lazy";a.append(img)}const copy=el("div");copy.append(el("span",(article.category||"Cinema").replaceAll("-"," ")),el(titleTag,article.title));if(article.description)copy.append(el("p",article.description));a.append(copy);return a}
-function render(items){if(!items.length)return;const lead=items[0],leadRoot=document.querySelector(".lead");leadRoot.classList.remove("placeholder");leadRoot.replaceChildren();if(lead.image_url){const img=document.createElement("img");img.src=safeUrl(lead.image_url);img.alt="";leadRoot.append(img)}leadRoot.append(el("span",(lead.category||"Em destaque").replaceAll("-"," ")),el("h1",lead.title),el("p",lead.description));leadRoot.onclick=()=>location.href=`materia.html?id=${Number(lead.id)}`;
-document.getElementById("secondary-leads").replaceChildren(...items.slice(1,3).map(x=>link(x,"secondary-card","h2")));
-document.getElementById("briefs").replaceChildren(...items.slice(3,8).map(x=>link(x,"brief")));
-const by=slug=>items.filter(x=>x.category===slug);const criticism=by("critica");document.getElementById("critica-list").replaceChildren(...(criticism.length?criticism:items).slice(0,5).map(x=>link(x,"list-article")));
-const essays=by("ensaios");document.getElementById("ensaios-list").replaceChildren(...(essays.length?essays:items.slice(5)).slice(0,4).map(x=>link(x,"card")));
-const festivals=items.filter(x=>["festivais","entrevistas"].includes(x.category));document.getElementById("festival-list").replaceChildren(...(festivals.length?festivals:items.slice(2)).slice(0,4).map(x=>link(x,"card")));document.getElementById("front-page").setAttribute("aria-busy","false")}
+function render(items){if(!items.length)return;const bySlot=new Map(items.filter(x=>slotOf(x)).map(x=>[slotOf(x),x])),used=new Set();const take=(slot,fallback=[])=>{const exact=bySlot.get(slot);if(exact&&!used.has(exact.id)){used.add(exact.id);return exact}const item=fallback.find(x=>!used.has(x.id))||items.find(x=>!used.has(x.id));if(item)used.add(item.id);return item};const takeMany=(prefix,count,fallback=[])=>Array.from({length:count},(_,i)=>take(`${prefix}_${i+1}`,fallback)).filter(Boolean);
+const lead=take("jc_lead"),leadRoot=document.querySelector(".lead");leadRoot.classList.remove("placeholder");leadRoot.replaceChildren();if(lead.image_url){const img=document.createElement("img");img.src=safeUrl(lead.image_url);img.alt="";leadRoot.append(img)}leadRoot.append(el("span",(lead.category||"Em destaque").replaceAll("-"," ")),el("h1",lead.title),el("p",lead.description));leadRoot.onclick=()=>location.href=`materia.html?id=${Number(lead.id)}`;
+document.getElementById("secondary-leads").replaceChildren(...takeMany("jc_secondary",2).map(x=>link(x,"secondary-card","h2")));
+document.getElementById("briefs").replaceChildren(...takeMany("jc_brief",5).map(x=>link(x,"brief")));
+const by=slug=>items.filter(x=>x.category===slug);
+document.getElementById("critica-list").replaceChildren(...takeMany("jc_critique",5,by("critica")).map(x=>link(x,"list-article")));
+document.getElementById("ensaios-list").replaceChildren(...takeMany("jc_essay",4,by("ensaios")).map(x=>link(x,"card")));
+document.getElementById("festival-list").replaceChildren(...takeMany("jc_festival",4,items.filter(x=>["festivais","entrevistas"].includes(x.category))).map(x=>link(x,"card")));
+document.getElementById("front-page").setAttribute("aria-busy","false")}
 async function load(){try{const r=await fetch("/api/articles",{cache:"no-store"});if(!r.ok)throw 0;const p=await r.json();render(Array.isArray(p)?p:p.articles||[])}catch{document.querySelector(".lead p").textContent="A edição não pôde ser atualizada agora."}}load();
