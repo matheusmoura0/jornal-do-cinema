@@ -1,24 +1,38 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Crítica, ensaio, história e pensamento sobre cinema."><title>Jornal do Cinema</title><link rel="stylesheet" href="styles.css"><script src="app.js" defer></script></head>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Crítica, ensaio, história e pensamento sobre cinema.">
+  <title>Jornal do Cinema</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
 <body>
-<header class="masthead">
-  <div class="edition-line"><span>EDIÇÃO DIGITAL</span><span>CRÍTICA · ENSAIO · MEMÓRIA</span><span id="today"></span></div>
-  <div class="brand-row"><button class="menu" aria-label="Abrir menu">☰</button><a class="brand" href="index.html"><small>JORNAL DO</small><strong>CINEMA</strong></a><a class="search" href="#arquivo">PESQUISAR</a></div>
-  <nav><a href="#critica">Crítica</a><a href="#ensaios">Ensaios</a><a href="#entrevistas">Entrevistas</a><a href="#festivais">Festivais</a><a href="#historia">História do Cinema</a><a href="#industria">Indústria</a></nav>
-</header>
-<main>
-  <aside class="ad"><span>PUBLICIDADE</span><div>970 × 150</div></aside>
-  <section class="front-page" id="front-page" aria-busy="true">
-    <article class="lead placeholder"><span>EM DESTAQUE</span><h1>O cinema como arte, memória e reflexão.</h1><p>Carregando a seleção editorial do dia.</p></article>
-    <div class="secondary-leads" id="secondary-leads"></div>
-    <aside class="briefs"><h2>Em pauta</h2><div id="briefs"></div></aside>
-  </section>
-  <section class="quote-band"><blockquote>“O cinema substitui o nosso olhar por um mundo que se harmoniza com nossos desejos.”</blockquote><cite>André Bazin</cite></section>
-  <section class="journal-section" id="critica"><header><span>LEITURA DO DIA</span><h2>Crítica</h2></header><div class="article-list" id="critica-list"></div></section>
-  <section class="two-columns">
-    <div class="journal-section" id="ensaios"><header><span>PENSAMENTO</span><h2>Ensaios</h2></header><div class="essay-grid" id="ensaios-list"></div></div>
-    <aside class="paper-edition"><span>EDIÇÃO ESPECIAL</span><div class="cover"><small>JORNAL DO</small><strong>CINEMA</strong><em>100 FILMES ESSENCIAIS</em></div><p>Uma seleção crítica para atravessar a história do cinema.</p></aside>
-  </section>
-  <section class="journal-section" id="festivais"><header><span>CIRCUITO</span><h2>Festivais e entrevistas</h2></header><div class="cards" id="festival-list"></div></section>
-</main>
-<footer><a class="brand" href="index.html"><small>JORNAL DO</small><strong>CINEMA</strong></a><p>Crítica, ensaio, história e pensamento sobre as imagens em movimento.</p><small>© 2026 Jornal do Cinema.</small></footer>
-</body></html>
+  <header class="masthead">
+    <div class="edition-line"><span>EDIÇÃO DIGITAL</span><span>CRÍTICA · ENSAIO · MEMÓRIA</span><span id="today"></span></div>
+    <div class="brand-row">
+      <button class="menu" aria-label="Abrir menu" aria-expanded="false"><span></span><span></span><span></span></button>
+      <a class="brand" href="index.html"><small>JORNAL DO</small><strong>CINEMA</strong></a>
+      <a class="search" href="#arquivo">PESQUISAR <b aria-hidden="true">⌕</b></a>
+    </div>
+    <nav id="main-nav"><a href="#critica">Crítica</a><a href="#ensaios">Ensaios</a><a href="#entrevistas">Entrevistas</a><a href="#festivais">Festivais</a><a href="#historia">História do Cinema</a><a href="#industria">Indústria</a></nav>
+  </header>
+  <main>
+    <aside class="ad" aria-label="Publicidade"><span>PUBLICIDADE</span><div>970 × 150</div></aside>
+    <section class="front-page" id="front-page" aria-busy="true">
+      <article class="lead placeholder"><span>CRÍTICA</span><h1>O cinema como forma de pensamento</h1><p>Carregando a seleção editorial do dia.</p><b>LEIA A CRÍTICA COMPLETA</b></article>
+      <div class="secondary-leads" id="secondary-leads"></div>
+      <aside class="briefs"><h2>Anotações culturais</h2><div id="briefs"></div></aside>
+    </section>
+    <section class="journal-section criticism" id="critica"><header><div><span>LEITURA DO DIA</span><h2>Crítica</h2></div><a href="#arquivo">VER TODAS →</a></header><div class="article-list" id="critica-list"></div></section>
+    <section class="editorial-spread">
+      <div class="journal-section" id="ensaios"><header><div><span>PENSAMENTO</span><h2>Ensaios</h2></div></header><div class="essay-grid" id="ensaios-list"></div></div>
+      <div class="journal-section" id="entrevistas"><header><div><span>CONVERSAS</span><h2>Entrevistas</h2></div></header><div class="interview-grid" id="entrevistas-list"></div></div>
+    </section>
+    <section class="journal-section festivals" id="festivais"><header><div><span>CIRCUITO INTERNACIONAL</span><h2>Festivais</h2></div><a href="#arquivo">COBERTURA COMPLETA →</a></header><div class="cards" id="festival-list"></div></section>
+    <section class="quote-band"><blockquote>“O cinema substitui o nosso olhar por um mundo que se harmoniza com nossos desejos.”</blockquote><cite>Jean Renoir</cite></section>
+  </main>
+  <footer><a class="brand" href="index.html"><small>JORNAL DO</small><strong>CINEMA</strong></a><p>Crítica, ensaio, história e pensamento sobre as imagens em movimento.</p><small>© 2026 Jornal do Cinema.</small></footer>
+</body>
+</html>
