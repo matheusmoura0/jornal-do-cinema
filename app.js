@@ -14,7 +14,7 @@ document.getElementById("entrevistas-list").replaceChildren(...takeMany("jc_fest
 document.getElementById("festival-list").replaceChildren(...takeMany("jc_festival",2,by("festivais"),2).map(x=>link(x,"card")));
 document.getElementById("front-page").setAttribute("aria-busy","false");return true}
 function showLoadError(){const front=document.getElementById("front-page");front.setAttribute("aria-busy","false");document.querySelector(".lead p").textContent="A edição não pôde ser atualizada agora. Tente novamente em alguns instantes."}
-async function load(){try{const r=await fetch("/api/articles",{cache:"no-store",signal:AbortSignal.timeout(9000)});if(!r.ok)throw new Error("api");const p=await r.json();if(!render(Array.isArray(p)?p:p.articles||[]))showLoadError()}catch{showLoadError()}}load();
+async function load(){try{const r=await fetch("https://correio-content-hub.onrender.com/api/v1/sites/by-domain/articles?domain=jornaldocinema.com.br",{cache:"no-store",signal:AbortSignal.timeout(9000)});if(!r.ok)throw new Error("api");const p=await r.json();if(!render(Array.isArray(p)?p:p.articles||[]))showLoadError()}catch{showLoadError()}}load();
 
 const menu=document.querySelector(".menu"),nav=document.getElementById("main-nav");
 menu?.addEventListener("click",()=>{const open=nav.classList.toggle("open");menu.setAttribute("aria-expanded",String(open))});
