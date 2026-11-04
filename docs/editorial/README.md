@@ -1,5 +1,7 @@
 # Guias em rascunho
 
+Conferência de conteúdo registrada em [4 de novembro de 2026](../conferencia-2026-11-04.md). Sem erro factual evidente identificado; aprovação editorial final e autoria continuam pendentes. Não publicar automaticamente.
+
 Preparados em 04/11/2026 com assistência de IA para revisão humana. Não publicados, não importados para o Hub, sem assinatura atribuída e sem imagem escolhida. Estes arquivos não entram no diretório de assets do site.
 
 1. [Como ler uma crítica sem transformar a nota em veredito](01-como-ler-uma-critica.md)
