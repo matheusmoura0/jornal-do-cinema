@@ -1,0 +1,7 @@
+{
+  "name": "jornal-do-cinema",
+  "main": "src/worker.mjs",
+  "compatibility_date": "2026-11-04",
+  "build": {"command": "node scripts/build.mjs"},
+  "assets": {"directory": "./public", "binding": "ASSETS", "run_worker_first": true}
+}

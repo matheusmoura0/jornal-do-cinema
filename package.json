@@ -1,0 +1,10 @@
+{
+  "name": "jornal-do-cinema",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test test/*.test.mjs",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "devDependencies": {"wrangler": "4.45.0"}
+}
