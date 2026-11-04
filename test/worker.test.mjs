@@ -25,6 +25,8 @@ test('public routes and rendering', async t => {
     assert.match(html,/ca-pub-7037572686437222/);
     assert.match(html,/id="arquivo"/);
     assert.doesNotMatch(html,/adsbygoogle\.js|Not cinema/);
+    assert.doesNotMatch(html,/href="\/\?editoria=critica"/);
+    assert.match(html,/href="\/contato">Contato/);
   });
   await t.test('syndicated article retains source, author and image credits', async () => {
     const response = await worker.fetch(request('/materia/2333'),{});

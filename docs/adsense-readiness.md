@@ -2,6 +2,8 @@
 
 Scope: Jornal do Cinema (.com.br), not the .pt sites or the Hub backend.
 
+Updated preparation plan: [Portuguese checklist](preparacao-aprovacao.md). Three [editorial drafts](editorial/README.md) are awaiting human review and are not published. A repeatable VPS-only check is available via `node scripts/readiness-vps.mjs`; technical success never automatically marks submission readiness.
+
 ## Implemented
 
 - Publisher verification via meta tag and ads.txt for pub-7037572686437222.
