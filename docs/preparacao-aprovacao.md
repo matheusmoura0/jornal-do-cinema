@@ -1,5 +1,7 @@
 # Preparação para solicitar revisão do AdSense
 
+Atualização final de 06/11/2026: propriedade verificada por metatag e revisão efetivamente enviada com autorização do titular. O painel confirmou `Revisão solicitada` e status `Preparando`. Ver [registro de envio](adsense-submission-2026-11-06.md). As notas de pedido pendente abaixo são históricas. Isso não significa aprovação nem ativação de anúncios.
+
 Site: https://jornaldocinema.com.br
 
 ## Atualização de 6 de novembro de 2026
