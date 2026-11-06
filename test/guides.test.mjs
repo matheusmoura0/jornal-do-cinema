@@ -14,6 +14,7 @@ test('only approved guides are rendered, with honest attribution and canonical',
     assert.match(html,/2026-11-06/);
     assert.doesNotMatch(html,/Status: rascunho|Revisão necessária:|Resumo proposto:|name="robots" content="noindex/);
     assert.doesNotMatch(html,/adsbygoogle\.js/);
+    assert.doesNotMatch(html,/assistência de IA/);
     assert.match(html,/<h2>/);
     assert.match(html,/<a href="https:\/\//);
     const scripts = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)];

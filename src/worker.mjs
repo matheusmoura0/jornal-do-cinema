@@ -1,10 +1,26 @@
 import { ORIGIN, PUBLISHER, categories, cinemaCategory, fetchArticles, escapeHtml as esc, safeUrl, jsonForHtml, htmlResponse, errorPage } from './site.mjs';
 import { pages } from './institutional.mjs';
 import {guides, guideListing, guideIndex, guidePage} from './guides.mjs';
+import {fetchCorreioEdition, fetchCorreioArticle} from './correio.mjs';
+
+async function fetchEdition() {
+  const sources = await Promise.allSettled([fetchCorreioEdition(),fetchArticles()]);
+  if (sources.every(source => source.status === 'rejected')) throw new Error('Edition unavailable');
+  const unique = new Map();
+  for (const source of sources) {
+    if (source.status !== 'fulfilled') continue;
+    for (const item of source.value) {
+      const sourceUrl = safeUrl(item.source_url);
+      const key = sourceUrl ? new URL(sourceUrl).pathname : `hub-${item.id}`;
+      if (!unique.has(key)) unique.set(key,item);
+    }
+  }
+  return [...unique.values()].sort((a,b) => (Date.parse(b.published_at)||0)-(Date.parse(a.published_at)||0));
+}
 
 function card(item, className='card', heading='h3') {
   const image = safeUrl(item.image_url);
-  return `<a class="${className}" href="/materia/${item.id}">${image ? `<img src="${esc(image)}" alt="" loading="lazy" width="800" height="500">` : ''}<div><span>${esc(categories[cinemaCategory(item)])}</span><${heading}>${esc(item.title)}</${heading}>${item.description ? `<p>${esc(item.description)}</p>` : ''}</div></a>`;
+  return `<a class="${className}" href="${esc(item.path || `/materia/${item.id}`)}">${image ? `<img src="${esc(image)}" alt="" loading="lazy" width="800" height="500">` : ''}<div><span>${esc(categories[cinemaCategory(item)])}</span><${heading}>${esc(item.title)}</${heading}>${item.description ? `<p>${esc(item.description)}</p>` : ''}</div></a>`;
 }
 function home(items, url) {
   const query = (url.searchParams.get('q') || '').trim().slice(0,160);
@@ -18,7 +34,7 @@ function home(items, url) {
   const pageUrl = number => {const params = new URLSearchParams();if(query)params.set('q',query);if(section)params.set('editoria',section);params.set('pagina',number);return `/?${params}#arquivo`;};
   const lead = list[0];
   const content = `${page === 1 && lead ? `<section class="front-page"><article class="lead">${card(lead,'lead-link','h1')}</article><div class="secondary-leads">${list.slice(1,3).map(item => card(item,'secondary-card','h2')).join('')}</div><aside class="briefs"><h2>Mais leituras</h2>${list.slice(3,8).map(item => card(item,'brief')).join('') || '<a href="/politica-editorial">Conheça a política editorial</a>'}</aside></section>` : ''}<section class="journal-section" id="arquivo"><header><div><span>ARQUIVO DA EDIÇÃO</span><h2>${esc(section ? categories[section] : 'Notícias e leituras')}</h2></div></header><form class="archive-search" role="search" action="/#arquivo"><label for="q">Pesquisar no jornal</label><div><input id="q" name="q" type="search" value="${esc(query)}" maxlength="160" placeholder="Título ou assunto">${section ? `<input type="hidden" name="editoria" value="${esc(section)}">` : ''}<button type="submit">Buscar</button><a href="/#arquivo">Limpar</a></div></form><p>${list.length} ${list.length === 1 ? 'matéria encontrada' : 'matérias encontradas'}</p><div class="archive-grid">${shown.map(item => card(item)).join('') || '<p>Nenhuma matéria encontrada nesta seleção.</p>'}</div><nav class="pagination" aria-label="Paginação">${page > 1 ? `<a href="${esc(pageUrl(page-1))}">Anterior</a>` : ''}${page*12 < list.length ? `<a href="${esc(pageUrl(page+1))}">Próxima</a>` : ''}</nav></section>`;
-  return htmlResponse('Jornal do Cinema',(!query && !section && page === 1 ? guideListing() : '')+content,{path:section ? `/?editoria=${encodeURIComponent(section)}` : '/',noindex:!!query || (!list.length && (section || !guides.length)) || page > 1,meta:'<meta name="description" content="Notícias e leituras sobre cinema, com autoria e fontes identificadas.">'});
+  return htmlResponse('Jornal do Cinema',content+(!query && !section && page === 1 ? guideListing() : ''),{path:section ? `/?editoria=${encodeURIComponent(section)}` : '/',noindex:!!query || (!list.length && (section || !guides.length)) || page > 1,meta:'<meta name="description" content="Notícias e leituras sobre cinema, com autoria e fontes identificadas.">'});
 }
 function articlePage(item) {
   const source = safeUrl(item.source_url);
@@ -44,6 +60,11 @@ export default {
     if (url.pathname === '/ads.txt') return new Response(`google.com, ${PUBLISHER.replace('ca-','')}, DIRECT, f08c47fec0942fa0\n`,{headers:{'Content-Type':'text/plain; charset=utf-8'}});
     if (url.pathname === '/robots.txt') return new Response(`User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: ${ORIGIN}/sitemap.xml\n`,{headers:{'Content-Type':'text/plain; charset=utf-8'}});
     const pageKey = url.pathname.slice(1).replace(/\/$/,'');
+    const correioMatch = url.pathname.match(/^\/correio\/(\d{4}\/\d{2}\/\d+-[a-z0-9-]+)\/?$/);
+    if (correioMatch) {
+      try {return articlePage(await fetchCorreioArticle(correioMatch[1]));}
+      catch (error) {return errorPage(error.status === 404 || error.status === 410 ? 404 : 503);}
+    }
     if (url.pathname === '/guias') return guideIndex();
     const guideMatch = url.pathname.match(/^\/guias\/([a-z0-9-]+)\/?$/);
     if (guideMatch) {
@@ -56,7 +77,7 @@ export default {
     const match = url.pathname.match(/^\/materia\/(\d+)\/?$/);
     if (url.pathname !== '/' && !match && !['/api/articles','/sitemap.xml'].includes(url.pathname)) return errorPage(404);
     let items;
-    try { items = await fetchArticles(); } catch { return url.pathname === '/api/articles' ? Response.json({error:'Temporariamente indisponível'},{status:503,headers:{'Cache-Control':'no-store'}}) : errorPage(503); }
+    try { items = await (match ? fetchArticles() : fetchEdition()); } catch { return url.pathname === '/api/articles' ? Response.json({error:'Temporariamente indisponível'},{status:503,headers:{'Cache-Control':'no-store'}}) : errorPage(503); }
     if (url.pathname === '/api/articles') return Response.json(items,{headers:{'Cache-Control':'public, max-age=60'}});
     if (url.pathname === '/sitemap.xml') {
       const paths = ['/','/guias',...guides.map(guide => `/guias/${guide.slug}`),...Object.keys(pages).map(path => `/${path}`),...items.filter(item => safeUrl(item.canonical_url) === `${ORIGIN}/materia/${item.id}` && String(item.content || '').length >= 300).map(item => `/materia/${item.id}`)];

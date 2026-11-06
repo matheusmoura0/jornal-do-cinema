@@ -1,7 +1,7 @@
 import guides from '../.generated/guides.mjs';
 import {ORIGIN, escapeHtml as esc, jsonForHtml, htmlResponse} from './site.mjs';
 export {guides};
-export const guideByline = 'Jornal do Cinema — guia editorial preparado com assistência de IA e revisado por Matheus Moura';
+export const guideByline = 'Jornal do Cinema — revisão editorial: Matheus Moura';
 export function guideListing() {
   return `<section class="journal-section" id="guias"><header><div><span>LEITURA E LINGUAGEM</span><h2>Guias de cinema</h2></div></header><div class="archive-grid">${guides.map(guide => `<a class="card guide-card" href="/guias/${guide.slug}"><span>GUIA EDITORIAL</span><h3>${esc(guide.title)}</h3><p>${esc(guide.description)}</p></a>`).join('')}</div></section>`;
 }

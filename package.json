@@ -9,5 +9,8 @@
   "devDependencies": {
     "markdown-it": "14.1.0",
     "wrangler": "4.45.0"
+  },
+  "dependencies": {
+    "linkedom": "0.18.12"
   }
 }
