@@ -20,7 +20,10 @@ async function fetchEdition() {
 
 function card(item, className='card', heading='h3') {
   const image = safeUrl(item.image_url);
-  return `<a class="${className}" href="${esc(item.path || `/materia/${item.id}`)}">${image ? `<img src="${esc(image)}" alt="" loading="lazy" width="800" height="500">` : ''}<div><span>${esc(categories[cinemaCategory(item)])}</span><${heading}>${esc(item.title)}</${heading}>${item.description ? `<p>${esc(item.description)}</p>` : ''}</div></a>`;
+  const date = new Date(item.published_at);
+  const time = item.published_at && !Number.isNaN(+date) ? `<time datetime="${date.toISOString()}">${esc(new Intl.DateTimeFormat('pt-BR',{dateStyle:'medium',timeZone:'America/Sao_Paulo'}).format(date))}</time>` : '';
+  const label = cinemaCategory(item) === 'noticias' ? 'Cinema' : categories[cinemaCategory(item)];
+  return `<a class="${className}${image ? '' : ' text-story'}" href="${esc(item.path || `/materia/${item.id}`)}">${image ? `<img src="${esc(image)}" alt="" loading="${className === 'lead-link' ? 'eager' : 'lazy'}" ${className === 'lead-link' ? 'fetchpriority="high"' : ''} decoding="async" width="800" height="500">` : ''}<div class="story-copy"><span class="story-kicker">${esc(label)}</span><${heading}>${esc(item.title)}</${heading}>${item.description ? `<p>${esc(item.description)}</p>` : ''}<div class="story-meta">${className === 'lead-link' && item.author ? `<span>${esc(item.author)}</span>` : ''}${time}</div></div></a>`;
 }
 function home(items, url) {
   const query = (url.searchParams.get('q') || '').trim().slice(0,160);
@@ -32,8 +35,16 @@ function home(items, url) {
   if (page > Math.max(1, Math.ceil(list.length / 12))) return errorPage(404);
   const shown = list.slice((page-1)*12,page*12);
   const pageUrl = number => {const params = new URLSearchParams();if(query)params.set('q',query);if(section)params.set('editoria',section);params.set('pagina',number);return `/?${params}#arquivo`;};
-  const lead = list[0];
-  const content = `${page === 1 && lead ? `<section class="front-page"><article class="lead">${card(lead,'lead-link','h1')}</article><div class="secondary-leads">${list.slice(1,3).map(item => card(item,'secondary-card','h2')).join('')}</div><aside class="briefs"><h2>Mais leituras</h2>${list.slice(3,8).map(item => card(item,'brief')).join('') || '<a href="/politica-editorial">Conheça a política editorial</a>'}</aside></section>` : ''}<section class="journal-section" id="arquivo"><header><div><span>ARQUIVO DA EDIÇÃO</span><h2>${esc(section ? categories[section] : 'Notícias e leituras')}</h2></div></header><form class="archive-search" role="search" action="/#arquivo"><label for="q">Pesquisar no jornal</label><div><input id="q" name="q" type="search" value="${esc(query)}" maxlength="160" placeholder="Título ou assunto">${section ? `<input type="hidden" name="editoria" value="${esc(section)}">` : ''}<button type="submit">Buscar</button><a href="/#arquivo">Limpar</a></div></form><p>${list.length} ${list.length === 1 ? 'matéria encontrada' : 'matérias encontradas'}</p><div class="archive-grid">${shown.map(item => card(item)).join('') || '<p>Nenhuma matéria encontrada nesta seleção.</p>'}</div><nav class="pagination" aria-label="Paginação">${page > 1 ? `<a href="${esc(pageUrl(page-1))}">Anterior</a>` : ''}${page*12 < list.length ? `<a href="${esc(pageUrl(page+1))}">Próxima</a>` : ''}</nav></section>`;
+  const featured = !query && !section && page === 1 && shown.length;
+  const lead = featured ? shown.find(item => safeUrl(item.image_url)) || shown[0] : null;
+  const used = new Set(lead ? [lead] : []);
+  const secondary = featured ? shown.filter(item => item !== lead && safeUrl(item.image_url)).slice(0,2) : [];
+  secondary.forEach(item => used.add(item));
+  const briefs = featured ? shown.filter(item => !used.has(item)).slice(0,4) : [];
+  briefs.forEach(item => used.add(item));
+  const remaining = shown.filter(item => !used.has(item));
+  const front = lead ? `<div class="edition-heading"><span>Em destaque</span><a href="/#arquivo">Todas as notícias</a></div><section class="front-page" aria-label="Destaques da edição"><article class="lead">${card(lead,'lead-link','h1')}</article><div class="secondary-leads">${secondary.map(item => card(item,'secondary-card','h2')).join('')}</div>${briefs.length ? `<aside class="briefs"><h2>Nesta edição</h2><div>${briefs.map(item => card(item,'brief')).join('')}</div></aside>` : ''}</section>` : '';
+  const content = `${front}<section class="journal-section" id="arquivo"><header><div><span>${query ? 'PESQUISA' : 'CONTINUE A LEITURA'}</span><h2>${esc(query ? 'Resultados da busca' : section ? categories[section] : 'Mais cinema')}</h2></div><span class="result-count">${list.length} ${list.length === 1 ? 'matéria encontrada' : 'matérias encontradas'}</span></header><form class="archive-search" role="search" action="/#arquivo"><label for="q">Pesquisar no jornal</label><div><input id="q" name="q" type="search" value="${esc(query)}" maxlength="160" placeholder="Filme, festival, diretor ou assunto">${section ? `<input type="hidden" name="editoria" value="${esc(section)}">` : ''}<button type="submit">Buscar</button>${query || section ? '<a href="/#arquivo">Limpar</a>' : ''}</div></form><div class="archive-grid">${remaining.map(item => card(item)).join('') || (list.length ? '<p>Você já está vendo as matérias desta página nos destaques acima.</p>' : '<p>Nenhuma matéria encontrada nesta seleção.</p>')}</div><nav class="pagination" aria-label="Paginação">${page > 1 ? `<a href="${esc(pageUrl(page-1))}">Anterior</a>` : ''}${page*12 < list.length ? `<a href="${esc(pageUrl(page+1))}">Mais notícias</a>` : ''}</nav></section>`;
   return htmlResponse('Jornal do Cinema',content+(!query && !section && page === 1 ? guideListing() : ''),{path:section ? `/?editoria=${encodeURIComponent(section)}` : '/',noindex:!!query || (!list.length && (section || !guides.length)) || page > 1,meta:'<meta name="description" content="Notícias e leituras sobre cinema, com autoria e fontes identificadas.">'});
 }
 function articlePage(item) {
@@ -73,7 +84,7 @@ export default {
     }
     const page = Object.hasOwn(pages, pageKey) ? pages[pageKey] : null;
     if (page) return htmlResponse(page.title,`<section class="article-page legal-page"><h1>${esc(page.title)}</h1><div class="article-body">${page.body}</div></section>`,{path:url.pathname});
-    if (['/styles.css','/app.js','/icons/menu.svg','/icons/LICENSE'].includes(url.pathname)) return env.ASSETS.fetch(request);
+    if (['/styles.css','/app.js','/icons/menu.svg','/icons/search.svg','/icons/LICENSE'].includes(url.pathname)) return env.ASSETS.fetch(request);
     const match = url.pathname.match(/^\/materia\/(\d+)\/?$/);
     if (url.pathname !== '/' && !match && !['/api/articles','/sitemap.xml'].includes(url.pathname)) return errorPage(404);
     let items;

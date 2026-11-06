@@ -12,7 +12,7 @@ const {mkdir} = require('node:fs/promises');
       await new Promise(resolve => setTimeout(resolve,200));
     }
     browser = await chromium.launch({headless:true,args:['--no-sandbox']});
-    for (const width of [1440,390,320]) {
+    for (const width of [1440,768,390,320]) {
       const page = await browser.newPage({viewport:{width,height:900}});
       await page.goto('http://127.0.0.1:3210/',{waitUntil:'networkidle'});
       assert.ok((await page.locator('.lead h1').innerText()).length>5);
@@ -22,6 +22,9 @@ const {mkdir} = require('node:fs/promises');
       await page.locator('main img').evaluateAll(nodes => nodes.forEach(node => {node.loading='eager';}));
       await page.waitForFunction(() => [...document.querySelectorAll('main img')].every(node => node.complete && node.naturalWidth>0),{},{timeout:30000});
       await page.screenshot({path:`/app/review-output/home-${width}.png`,fullPage:true});
+      await page.screenshot({path:`/app/review-output/home-top-${width}.png`});
+      const newsLinks=await page.locator('main a[href^="/correio/"],main a[href^="/materia/"]').evaluateAll(nodes => nodes.map(node => node.getAttribute('href')));
+      assert.equal(new Set(newsLinks).size,newsLinks.length,'Stories should not repeat on homepage');
       const images = await page.locator('main img').evaluateAll(nodes => nodes.map(n => ({src:n.src,ok:n.complete && n.naturalWidth>0})));
       assert.ok(images.length>0);
       assert.ok(images.every(image => image.ok),JSON.stringify(images));
