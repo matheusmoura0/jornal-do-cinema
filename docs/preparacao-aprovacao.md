@@ -1,6 +1,15 @@
 # Preparação para solicitar revisão do AdSense
 
 Site: https://jornaldocinema.com.br
+
+## Atualização de 6 de novembro de 2026
+
+O titular aprovou publicar os três guias com a identificação transparente de assistência de IA e revisão por Matheus Moura. Publicação confirmada em `/guias/` e sitemap. Foram executados oito testes automatizados e verificação visual na VPS em 320, 390 e 1440 pixels. Nenhum script de publicidade foi ativado.
+
+O AdSense foi consultado na conta `cmdev072@gmail.com`, publisher `pub-7037572686437222`. Na lista observada havia Turismo Hoje e Correio da Manhã, mas não Jornal do Cinema. Nenhuma configuração desses dois domínios foi alterada. O pedido do Jornal do Cinema ainda não foi enviado nesta atualização; a conclusão depende do cadastro/verificação do novo domínio e do fluxo efetivamente apresentado pelo painel. Três guias aprovados não garantem aprovação, e as pendências de direitos, identificação e consentimento abaixo não são automaticamente resolvidas pela publicação.
+
+Os parágrafos seguintes preservam o diagnóstico de 4 de novembro como histórico, não o inventário atualizado.
+
 Revisão técnica: 4 de novembro de 2026. Nenhuma solicitação enviada ao Google.
 
 ## Resultado atual
