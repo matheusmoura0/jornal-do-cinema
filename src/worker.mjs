@@ -2,6 +2,8 @@ import { ORIGIN, PUBLISHER, categories, cinemaCategory, fetchArticles, escapeHtm
 import { pages } from './institutional.mjs';
 import {guides, guideListing, guideIndex, guidePage} from './guides.mjs';
 import {fetchCorreioEdition, fetchCorreioArticle} from './correio.mjs';
+import {clubPage,clubPromo} from './cineclube.mjs';
+import {readerTools,savedPage} from './reader.mjs';
 
 async function fetchEdition() {
   const sources = await Promise.allSettled([fetchCorreioEdition(),fetchArticles()]);
@@ -45,7 +47,7 @@ function home(items, url) {
   const remaining = shown.filter(item => !used.has(item));
   const front = lead ? `<div class="edition-heading"><span>Em destaque</span><a href="/#arquivo">Todas as notícias</a></div><section class="front-page" aria-label="Destaques da edição"><article class="lead">${card(lead,'lead-link','h1')}</article><div class="secondary-leads">${secondary.map(item => card(item,'secondary-card','h2')).join('')}</div>${briefs.length ? `<aside class="briefs"><h2>Nesta edição</h2><div>${briefs.map(item => card(item,'brief')).join('')}</div></aside>` : ''}</section>` : '';
   const content = `${front}<section class="journal-section" id="arquivo"><header><div><span>${query ? 'PESQUISA' : 'CONTINUE A LEITURA'}</span><h2>${esc(query ? 'Resultados da busca' : section ? categories[section] : 'Mais cinema')}</h2></div><span class="result-count">${list.length} ${list.length === 1 ? 'matéria encontrada' : 'matérias encontradas'}</span></header><form class="archive-search" role="search" action="/#arquivo"><label for="q">Pesquisar no jornal</label><div><input id="q" name="q" type="search" value="${esc(query)}" maxlength="160" placeholder="Filme, festival, diretor ou assunto">${section ? `<input type="hidden" name="editoria" value="${esc(section)}">` : ''}<button type="submit">Buscar</button>${query || section ? '<a href="/#arquivo">Limpar</a>' : ''}</div></form><div class="archive-grid">${remaining.map(item => card(item)).join('') || (list.length ? '<p>Você já está vendo as matérias desta página nos destaques acima.</p>' : '<p>Nenhuma matéria encontrada nesta seleção.</p>')}</div><nav class="pagination" aria-label="Paginação">${page > 1 ? `<a href="${esc(pageUrl(page-1))}">Anterior</a>` : ''}${page*12 < list.length ? `<a href="${esc(pageUrl(page+1))}">Mais notícias</a>` : ''}</nav></section>`;
-  return htmlResponse('Jornal do Cinema',content+(!query && !section && page === 1 ? guideListing() : ''),{path:section ? `/?editoria=${encodeURIComponent(section)}` : '/',noindex:!!query || (!list.length && (section || !guides.length)) || page > 1,meta:'<meta name="description" content="Notícias e leituras sobre cinema, com autoria e fontes identificadas.">'});
+  return htmlResponse('Jornal do Cinema',content+(!query && !section && page === 1 ? clubPromo()+guideListing() : ''),{path:section ? `/?editoria=${encodeURIComponent(section)}` : '/',noindex:!!query || (!list.length && (section || !guides.length)) || page > 1,meta:'<meta name="description" content="Notícias e leituras sobre cinema, com autoria e fontes identificadas.">'});
 }
 function articlePage(item) {
   const source = safeUrl(item.source_url);
@@ -56,7 +58,7 @@ function articlePage(item) {
   const dateValid = item.published_at && !Number.isNaN(+date);
   const content = String(item.content || '').trim();
   const schema = {'@context':'https://schema.org','@type':'NewsArticle',headline:item.title,publisher:{'@type':'Organization',name:'Jornal do Cinema'},...(item.author ? {author:{'@type':'Person',name:item.author}} : {}),...(dateValid ? {datePublished:date.toISOString()} : {}),...(image ? {image:[image]} : {}),...(source ? {isBasedOn:source} : {})};
-  return htmlResponse(item.title, `<article class="article-page"><a href="/">Início</a><p class="article-kicker">${esc(categories[cinemaCategory(item)])}</p><h1>${esc(item.title)}</h1><p class="article-deck">${esc(item.description)}</p><div class="article-byline"><span>${esc(item.author || item.publisher || 'Autoria não informada pela fonte')}</span>${dateValid ? `<time datetime="${date.toISOString()}">${esc(new Intl.DateTimeFormat('pt-BR',{dateStyle:'long',timeZone:'America/Sao_Paulo'}).format(date))}</time>` : ''}</div>${image ? `<figure><img class="article-image" src="${esc(image)}" alt=""><figcaption>${esc(item.image_credit || '')}</figcaption></figure>` : ''}<div class="article-body">${content.split(/\n{2,}/).filter(Boolean).map(part => `<p>${esc(part).replace(/\n/g,'<br>')}</p>`).join('') || '<p>O texto está indisponível.</p>'}</div>${!local && source ? `<aside class="source-note"><p>${esc(item.credit || `Publicado originalmente por ${item.publisher || 'outra publicação'}`)}</p><a href="${esc(source)}" rel="noopener">Consultar a publicação original</a></aside>` : ''}</article>`,{path:`/materia/${item.id}`,noindex:!local || content.length < 300,meta:`<meta name="description" content="${esc(item.description || '')}"><meta property="og:type" content="article"><meta property="og:title" content="${esc(item.title)}">${image ? `<meta property="og:image" content="${esc(image)}">` : ''}<script type="application/ld+json">${jsonForHtml(schema)}</script>`});
+  return htmlResponse(item.title, `<article class="article-page"><a href="/">Início</a><p class="article-kicker">${esc(categories[cinemaCategory(item)])}</p><h1>${esc(item.title)}</h1><p class="article-deck">${esc(item.description)}</p><div class="article-byline"><span>${esc(item.author || item.publisher || 'Autoria não informada pela fonte')}</span>${dateValid ? `<time datetime="${date.toISOString()}">${esc(new Intl.DateTimeFormat('pt-BR',{dateStyle:'long',timeZone:'America/Sao_Paulo'}).format(date))}</time>` : ''}</div>${readerTools(item.path || `/materia/${item.id}`,item.title)}${image ? `<figure><img class="article-image" src="${esc(image)}" alt=""><figcaption>${esc(item.image_credit || '')}</figcaption></figure>` : ''}<div class="article-body">${content.split(/\n{2,}/).filter(Boolean).map(part => `<p>${esc(part).replace(/\n/g,'<br>')}</p>`).join('') || '<p>O texto está indisponível.</p>'}</div>${!local && source ? `<aside class="source-note"><p>${esc(item.credit || `Publicado originalmente por ${item.publisher || 'outra publicação'}`)}</p><a href="${esc(source)}" rel="noopener">Consultar a publicação original</a></aside>` : ''}</article>`,{path:item.path || `/materia/${item.id}`,noindex:!local || content.length < 300,meta:`<meta name="description" content="${esc(item.description || '')}"><meta property="og:type" content="article"><meta property="og:title" content="${esc(item.title)}">${image ? `<meta property="og:image" content="${esc(image)}">` : ''}<script type="application/ld+json">${jsonForHtml(schema)}</script>`});
 }
 export default {
   async fetch(request, env) {
@@ -71,6 +73,8 @@ export default {
     if (url.pathname === '/ads.txt') return new Response(`google.com, ${PUBLISHER.replace('ca-','')}, DIRECT, f08c47fec0942fa0\n`,{headers:{'Content-Type':'text/plain; charset=utf-8'}});
     if (url.pathname === '/robots.txt') return new Response(`User-agent: *\nAllow: /\nDisallow: /api/\nSitemap: ${ORIGIN}/sitemap.xml\n`,{headers:{'Content-Type':'text/plain; charset=utf-8'}});
     const pageKey = url.pathname.slice(1).replace(/\/$/,'');
+    if (url.pathname === '/cineclube') return clubPage(url);
+    if (url.pathname === '/salvos') return savedPage();
     const correioMatch = url.pathname.match(/^\/correio\/(\d{4}\/\d{2}\/\d+-[a-z0-9-]+)\/?$/);
     if (correioMatch) {
       try {return articlePage(await fetchCorreioArticle(correioMatch[1]));}
@@ -84,14 +88,14 @@ export default {
     }
     const page = Object.hasOwn(pages, pageKey) ? pages[pageKey] : null;
     if (page) return htmlResponse(page.title,`<section class="article-page legal-page"><h1>${esc(page.title)}</h1><div class="article-body">${page.body}</div></section>`,{path:url.pathname});
-    if (['/styles.css','/app.js','/icons/menu.svg','/icons/search.svg','/icons/LICENSE'].includes(url.pathname)) return env.ASSETS.fetch(request);
+    if (['/styles.css','/app.js','/icons/menu.svg','/icons/search.svg','/icons/bookmark.svg','/icons/trash-2.svg','/icons/LICENSE'].includes(url.pathname)) return env.ASSETS.fetch(request);
     const match = url.pathname.match(/^\/materia\/(\d+)\/?$/);
     if (url.pathname !== '/' && !match && !['/api/articles','/sitemap.xml'].includes(url.pathname)) return errorPage(404);
     let items;
     try { items = await (match ? fetchArticles() : fetchEdition()); } catch { return url.pathname === '/api/articles' ? Response.json({error:'Temporariamente indisponível'},{status:503,headers:{'Cache-Control':'no-store'}}) : errorPage(503); }
     if (url.pathname === '/api/articles') return Response.json(items,{headers:{'Cache-Control':'public, max-age=60'}});
     if (url.pathname === '/sitemap.xml') {
-      const paths = ['/','/guias',...guides.map(guide => `/guias/${guide.slug}`),...Object.keys(pages).map(path => `/${path}`),...items.filter(item => safeUrl(item.canonical_url) === `${ORIGIN}/materia/${item.id}` && String(item.content || '').length >= 300).map(item => `/materia/${item.id}`)];
+      const paths = ['/','/guias','/cineclube',...guides.map(guide => `/guias/${guide.slug}`),...Object.keys(pages).map(path => `/${path}`),...items.filter(item => safeUrl(item.canonical_url) === `${ORIGIN}/materia/${item.id}` && String(item.content || '').length >= 300).map(item => `/materia/${item.id}`)];
       return new Response(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${paths.map(path => `<url><loc>${ORIGIN}${esc(path)}</loc></url>`).join('')}</urlset>`,{headers:{'Content-Type':'application/xml; charset=utf-8'}});
     }
     if (match) {const item = items.find(item => String(item.id) === match[1]);return item ? articlePage(item) : errorPage(404);}

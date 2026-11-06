@@ -1,0 +1,26 @@
+{
+  "questions": [
+    {"question":"Na fotografia de um filme, o que é profundidade de campo?","options":["A duração total da cena","A faixa de distâncias que aparece nítida","O volume do som ambiente"],"answer":1,"explanation":"O foco pode manter diferentes distâncias nítidas ou destacar apenas uma faixa do espaço.","source":"https://filmanalysis.yale.edu/cinematography/"},
+    {"question":"Um close-up costuma privilegiar o quê?","options":["Uma vista geral da cidade","Todos os ambientes ao mesmo tempo","Um rosto ou detalhe em enquadramento aproximado"],"answer":2,"explanation":"A aproximação concentra nossa atenção em uma parte da ação, como uma expressão ou um objeto.","source":"https://filmanalysis.yale.edu/cinematography/"},
+    {"question":"A montagem paralela pode relacionar…","options":["Ações em lugares diferentes","Apenas os créditos finais","Somente cenas sem personagens"],"answer":0,"explanation":"Alternar entre linhas de ação permite aproximar acontecimentos que se passam em espaços distintos.","source":"https://filmanalysis.yale.edu/editing/"},
+    {"question":"Numa fusão entre planos, o que acontece?","options":["O filme fica sem som","Uma imagem desaparece enquanto outra surge","A câmera precisa permanecer imóvel"],"answer":1,"explanation":"Durante a transição, as duas imagens podem ficar sobrepostas por um breve intervalo.","source":"https://filmanalysis.yale.edu/editing/"},
+    {"question":"Um rádio tocando dentro do mundo das personagens produz som…","options":["Diegético","Obrigatoriamente silencioso","Sempre externo à história"],"answer":0,"explanation":"O som diegético tem uma origem apresentada como parte do mundo do filme, mesmo que a fonte esteja fora do quadro.","source":"https://filmanalysis.yale.edu/sound/"},
+    {"question":"Uma ponte sonora pode…","options":["Transformar qualquer filme em musical","Impedir a mudança de cena","Continuar ou antecipar um som na passagem entre cenas"],"answer":2,"explanation":"O som pode atravessar um corte, conectando momentos antes ou depois da mudança visual.","source":"https://filmanalysis.yale.edu/sound/"},
+    {"question":"Em Cannes, a Caméra d’or é…","options":["O nome de uma sala de exibição","Um prêmio de primeiro longa-metragem","Uma categoria de equipamento"],"answer":1,"explanation":"É um prêmio para primeiro longa entre seleções elegíveis, não o nome de uma seção do festival.","source":"https://www.festival-cannes.com/en/take-part/submit-a-film/"},
+    {"question":"Ser selecionado para um festival significa necessariamente ganhar um prêmio?","options":["Sim, sempre","Só quando há uma estreia","Não: seleção e premiação são resultados diferentes"],"answer":2,"explanation":"Um evento pode reunir seções competitivas e apresentações fora de competição. É preciso conferir o reconhecimento específico.","source":"https://www.festival-cannes.com/en/take-part/submit-a-film/"}
+  ],
+  "terms": [
+    {"name":"Close-up","definition":"Enquadramento aproximado que destaca um rosto ou detalhe.","source":"https://filmanalysis.yale.edu/cinematography/"},
+    {"name":"Contraste","definition":"Relação entre áreas claras e escuras na imagem.","source":"https://filmanalysis.yale.edu/cinematography/"},
+    {"name":"Profundidade de campo","definition":"Faixa de distâncias em que os elementos aparecem nítidos.","source":"https://filmanalysis.yale.edu/cinematography/"},
+    {"name":"Foco seletivo","definition":"Nitidez restrita a uma faixa do espaço, destacando certos elementos da imagem.","source":"https://filmanalysis.yale.edu/cinematography/"},
+    {"name":"Montagem","definition":"Organização das relações entre planos e suas transições.","source":"https://filmanalysis.yale.edu/editing/"},
+    {"name":"Montagem paralela","definition":"Alternância entre linhas de ação situadas em espaços diferentes.","source":"https://filmanalysis.yale.edu/editing/"},
+    {"name":"Fusão","definition":"Transição em que uma imagem desaparece gradualmente enquanto outra aparece.","source":"https://filmanalysis.yale.edu/editing/"},
+    {"name":"Som diegético","definition":"Som cuja origem pertence ao mundo apresentado pelo filme.","source":"https://filmanalysis.yale.edu/sound/"},
+    {"name":"Som não diegético","definition":"Som apresentado como externo ao mundo das personagens, como boa parte da música de acompanhamento.","source":"https://filmanalysis.yale.edu/sound/"},
+    {"name":"Ponte sonora","definition":"Som que continua ou se antecipa na passagem entre cenas.","source":"https://filmanalysis.yale.edu/sound/"},
+    {"name":"Caméra d’or","definition":"Prêmio de Cannes dedicado a primeiro longa entre as seleções elegíveis.","source":"https://www.festival-cannes.com/en/take-part/submit-a-film/"},
+    {"name":"Fora de competição","definition":"Participação que não integra aquela disputa competitiva; não equivale a um prêmio.","source":"https://www.festival-cannes.com/en/take-part/submit-a-film/"}
+  ]
+}
