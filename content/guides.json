@@ -1,0 +1,26 @@
+[
+  {
+    "slug":"como-ler-uma-critica",
+    "title":"Como ler uma crítica sem transformar a nota em veredito",
+    "description":"Antes de escolher um filme pelas estrelas, procure entender os argumentos, os critérios e o tipo de experiência que o texto descreve.",
+    "file":"docs/editorial/01-como-ler-uma-critica.md",
+    "publishedAt":"2026-11-06",
+    "approved":true
+  },
+  {
+    "slug":"como-entender-festivais",
+    "title":"Selecionado não é premiado: como entender os festivais de cinema",
+    "description":"Mostra, competição e prêmio indicam coisas diferentes. Um roteiro para ler notícias e cartazes sem confundir participação com vitória.",
+    "file":"docs/editorial/02-como-entender-festivais.md",
+    "publishedAt":"2026-11-06",
+    "approved":true
+  },
+  {
+    "slug":"como-observar-um-filme",
+    "title":"Além do enredo: um roteiro para observar imagem, montagem e som",
+    "description":"Três perguntas ajudam a perceber como um filme conduz nossa atenção, sem transformar a sessão em prova de conhecimentos técnicos.",
+    "file":"docs/editorial/03-como-observar-um-filme.md",
+    "publishedAt":"2026-11-06",
+    "approved":true
+  }
+]

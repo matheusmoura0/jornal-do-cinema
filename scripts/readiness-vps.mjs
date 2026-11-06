@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {writeFile, mkdir} from 'node:fs/promises';
 import {ORIGIN, PUBLISHER, selectCinema, safeUrl} from '../src/site.mjs';
+import {guides} from '../src/guides.mjs';
 
 // Run on the VPS. This report checks public responses, not editorial quality or account eligibility.
 const checks = [];
@@ -11,7 +12,7 @@ async function check(name, fn) {
 async function get(path) {
   return fetch(`${ORIGIN}${path}`,{signal:AbortSignal.timeout(15000)});
 }
-for (const path of ['/','/sobre','/contato','/politica-editorial','/privacidade','/cookies']) {
+for (const path of ['/','/sobre','/contato','/politica-editorial','/privacidade','/cookies','/guias',...guides.map(guide => `/guias/${guide.slug}`)]) {
   await check(`Public page ${path}`,async () => {
     const response = await get(path);
     assert.equal(response.status,200);
@@ -52,11 +53,11 @@ await check('Inventory from publication-specific Hub feed',async () => {
   };
 });
 const report = {
-  checkedAt:new Date().toISOString(),site:ORIGIN,checks,inventory,
+  checkedAt:new Date().toISOString(),site:ORIGIN,checks,inventory,publishedGuides:guides.map(guide => ({title:guide.title,url:`${ORIGIN}/guias/${guide.slug}`})),
   technicalChecksPassed:checks.every(check => check.status === 'pass'),
   submissionReady:false,
   pendingManualReview:[
-    'Human editorial review of original content; drafts do not count as published coverage.',
+    'Evaluate the full site editorial value; three approved guides do not guarantee AdSense eligibility.',
     'Confirm actual publisher identity and institutional/privacy disclosures.',
     'Confirm rights for republished articles and images, regardless of feed flags.',
     'Configure certified consent management where required before advertising activation.',

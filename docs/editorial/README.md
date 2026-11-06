@@ -1,5 +1,7 @@
 # Guias em rascunho
 
+Atualização de 06/11/2026: o titular aprovou expressamente publicar os três guias com a identificação “Jornal do Cinema — guia editorial preparado com assistência de IA e revisado por Matheus Moura”. O manifesto `content/guides.json` registra as versões aprovadas. O build remove os avisos internos de rascunho, preserva o texto e as fontes, e gera as páginas públicas em `/guias/`. A aprovação do AdSense continua independente.
+
 Conferência de conteúdo registrada em [4 de novembro de 2026](../conferencia-2026-11-04.md). Sem erro factual evidente identificado; aprovação editorial final e autoria continuam pendentes. Não publicar automaticamente.
 
 Preparados em 04/11/2026 com assistência de IA para revisão humana. Não publicados, não importados para o Hub, sem assinatura atribuída e sem imagem escolhida. Estes arquivos não entram no diretório de assets do site.
